@@ -4,4 +4,6 @@ module.exports = Object.assign({}, baseConfig, {
   entry: {
     server: './src/server/index.js',
   },
+
+  target: 'node',
 });

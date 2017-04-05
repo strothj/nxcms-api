@@ -31,7 +31,8 @@
     "build": "npm-run-all --parallel build:*",
     "build:client": "webpack --config tools/webpack.config.client.js",
     "build:server": "webpack --config tools/webpack.config.server.js",
-    "clean": "rimraf client.js server.js",
+    "dev": "webpack --config tools/webpack.config.server.dev.js",
+    "clean": "rimraf client.js server.js .build",
     "lint": "eslint \"src/**/*.js\" \"tools/**/*.js\""
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "eslint-plugin-react": "^6.9.0",
     "npm-run-all": "^4.0.2",
     "rimraf": "^2.6.1",
+    "start-server-webpack-plugin": "^2.1.2",
     "webpack": "^2.3.3",
     "webpack-node-externals": "^1.5.4"
   }
