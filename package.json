@@ -1,0 +1,45 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/strothj/nxcms-api.git",
+  "author": "strothj <jason@jasons.io>",
+  "license": "MIT",
+  "files": [
+    "client.js",
+    "server.js"
+  ],
+  "keywords": [
+    "nxcms",
+    "nxcms-api"
+  ],
+  "bugs": {
+    "url": "https://github.com/strothj/nxcms-api/issues"
+  },
+  "contributors": [
+    {
+      "name": "strothj",
+      "email": "jason@jasons.io",
+      "url": "https://jasons.io"
+    }
+  ],
+  "homepage": "https://github.com/strothj/nxcms-api",
+  "engines": {
+    "node": "6.x"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "webpack": "^2.3.3",
+    "webpack-node-externals": "^1.5.4"
+  }
+}
