@@ -1,0 +1,22 @@
+language: node_js
+node_js: '6'
+services:
+- mongodb
+addons:
+  apt:
+    sources:
+    - mongodb-3.2-precise
+    packages:
+    - mongodb-org-server
+script:
+- yarn lint
+- yarn test
+- yarn build
+deploy:
+  provider: npm
+  on:
+    repo: strothj/nxcms-api
+    tags: true
+  api_key:
+    secure: oY8eCRpIY1/YRMYriEUrMTblzFOq+dc3CgYOvBzbJjlcMddbIlUNUMJJETQYvyr4+ltFo9YuQuXBP0JV9CgUnzZYwTUhqr67zrOtZlnyIqMS7HkhVAbpMdJomPqm5/E4bs7NNrFzupoHU6W9s481QB1tV0raLRyphOyoep8N77ge0aSdHk5TFVQ+GVk+10bFtplaPMMFuu5UiTtCNqcHUF/kdB+tQrrc+bPO1ve/5rhD7s9MTQXEzPB4px85B+zULPF6okufTwKZ/nGdV2yggwQWcabi56f56ysc32Z/YHBRd3XgbmZXf9FcC8dSMfJAfVRKN2md4R1xY3wDBv3EQCJCTDTGFwiX9d1Vc9wwy5GxIkakpngr/8qwccvILQ/U+0IvRE9d6RzZLNLNI9DMq59BnAPMdBbA3d+fQpOjlyEtTpAoDlJmuLCn24/hs5mgA85EZaJsyUa+SfXzdjjSxtouqLSWzWcxtv1b8FhCoPEyDOTe1SUyNzfWEtUAZoIg6f+XVaXX59B+ixusOhw2xOsVIsxIywfjweILhAVpKg/tcCQ4Wzu3jxzTAh4N9ZFZv1mOLzN/39NX+ijoBng7f+AxqVKZEHBU1FiuyvuCiCPkDrg+d9a1xGeW3/mgxKggQFAbZTOvT+VdwLSi+mngT0uuxVz9edz4NpaH8MqFmNY=
+  skip_cleanup: true
