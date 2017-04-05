@@ -4,7 +4,7 @@ import apiServer from '../src/server';
 
 const createApp = () => {
   const app = express();
-  app.use('/', apiServer);
+  app.use('/api/', apiServer);
   return app;
 };
 
