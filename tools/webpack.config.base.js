@@ -1,21 +1,17 @@
+const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
-module.exports = {
-  context: __dirname,
+const projectRoot = path.resolve(__dirname, '..');
 
-  entry: {
-    client: './src/client/index.js',
-    server: './src/server/index.js',
-  },
+module.exports = {
+  context: projectRoot,
 
   output: {
-    path: __dirname,
+    path: projectRoot,
     filename: '[name].js',
     library: 'api',
     libraryTarget: 'commonjs2',
   },
-
-  target: 'node',
 
   externals: [nodeExternals()],
 };
