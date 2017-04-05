@@ -18,6 +18,7 @@ module.exports = Object.assign({}, baseConfig, {
   })],
 
   plugins: [
+    ...baseConfig.plugins,
     new StartServerPlugin('server.js'),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
