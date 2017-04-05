@@ -1,0 +1,3 @@
+--compilers js:babel-register
+--require regenerator-runtime/runtime
+src/**/*.spec.js
