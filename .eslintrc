@@ -1,0 +1,17 @@
+{
+  "env": {
+    "browser": true,
+    "mocha": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": ["tools/**/*.js", "src/**/*.spec.js"]
+    }],
+    "no-unused-expressions": "off",
+    "chai-friendly/no-unused-expressions": "error"
+  },
+  "extends": "airbnb",
+  "plugins": [
+    "chai-friendly"
+  ]
+}
