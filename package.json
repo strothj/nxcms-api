@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "nxcms-api",
   "version": "0.1.2",
   "main": "index.js",
   "repository": "https://github.com/strothj/nxcms-api.git",
