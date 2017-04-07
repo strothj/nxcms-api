@@ -8,10 +8,12 @@ const createApp = () => {
   return app;
 };
 
+const port = process.env.PORT || 3001;
+
 let currentApp = createApp();
 const server = http.createServer(currentApp);
-server.listen(3000);
-console.log('Server listening on port 3000'); // eslint-disable-line no-console
+server.listen(port);
+console.log(`Server listening on port ${port}`); // eslint-disable-line no-console
 
 module.hot.accept('../src/server', () => {
   server.removeListener('request', currentApp);
