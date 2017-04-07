@@ -53,5 +53,10 @@ describe('database', () => {
       await disconnect();
       expect(mongoose.connection.readyState).to.equal(disconnectedState);
     });
+
+    it('returns no error when called multiple times', async () => {
+      await disconnect();
+      await disconnect();
+    });
   });
 });
