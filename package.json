@@ -34,10 +34,11 @@
     "clean": "rimraf client.js server.js .build",
     "dev": "webpack --config tools/webpack.config.server.dev.js",
     "lint": "eslint \"src/**/*.js\" \"tools/**/*.js\"",
-    "test": "mocha --opts tools/mocha.opts"
+    "test": "cross-env NODE_ENV=test mocha --opts tools/mocha.opts"
   },
   "dependencies": {
     "express": "^4.15.2",
+    "mongoose": "^4.9.3",
     "regenerator-runtime": "^0.10.3"
   },
   "devDependencies": {
