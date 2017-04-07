@@ -17,6 +17,11 @@ describe('database', () => {
   afterEach(() => disconnect());
 
   describe('connect', () => {
+    it('can call multiple times without error', async () => {
+      await connect();
+      await connect();
+    });
+
     describe('during unit tests', () => {
       it('gets connection string from environment', async () => {
         await connect();
