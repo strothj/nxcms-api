@@ -8,7 +8,7 @@ const nodeExternals = require('webpack-node-externals');
 const babelOptions = (() => {
   let babelrc = fs.readFileSync(path.resolve(__dirname, '../.babelrc'), { encoding: 'utf8' });
   babelrc = JSON.parse(babelrc);
-  return Object.assign({}, {
+  return Object.assign({ babelrc: false }, {
     presets: babelrc.presets.map(preset => (
       preset === 'env' ? ['env', { modules: false }] : preset
     )),
