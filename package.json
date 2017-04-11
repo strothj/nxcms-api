@@ -37,7 +37,8 @@
     "test": "cross-env NODE_ENV=test mocha --opts tools/mocha.opts"
   },
   "dependencies": {
-    "express": "^4.15.2",
+    "koa": "^2.2.0",
+    "koa-router": "^7.1.1",
     "mongoose": "^4.9.3",
     "regenerator-runtime": "^0.10.3"
   },

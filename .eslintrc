@@ -5,7 +5,7 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": ["error", {
-      "devDependencies": ["tools/**/*.js", "src/**/*.spec.js"]
+      "devDependencies": ["tools/**/*.js", "src/**/*.spec.js", "src/dev-server/*.js"]
     }],
     "no-unused-expressions": "off",
     "chai-friendly/no-unused-expressions": "error"

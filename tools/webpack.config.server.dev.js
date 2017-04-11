@@ -8,7 +8,7 @@ const baseConfig = require('./webpack.config.server');
 module.exports = Object.assign({}, baseConfig, {
   entry: [
     'webpack/hot/poll?1000',
-    './tools/dev-server',
+    './src/dev-server',
   ],
 
   watch: true,
