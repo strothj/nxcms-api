@@ -29,4 +29,8 @@ module.exports = Object.assign({}, baseConfig, {
     path: path.resolve(__dirname, '../.build'),
     filename: 'server.js',
   },
+
+  node: {
+    __dirname: false,
+  },
 });

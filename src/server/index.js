@@ -1,2 +1,2 @@
 export * from './core';
-export { default as createRouter } from './createRouter';
+export { default as createRouter } from './router';
