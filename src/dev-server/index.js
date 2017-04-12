@@ -1,9 +1,21 @@
 import http from 'http';
-import app from './server';
+import createServer from './server';
 
-const server = http.createServer(app.callback()).listen(3001);
+const server = http.createServer();
+server.listen(3001);
+
+const setHandler = async () => {
+  try {
+    const app = await createServer();
+    server.on('request', app.callback());
+  } catch (e) {
+    console.error('createServer:', e); // eslint-disable-line no-console
+  }
+};
+
+setHandler();
 
 module.hot.accept('./server', () => {
-  server.removeAllListeners('request', server);
-  server.on('request', app.callback());
+  server.removeAllListeners('request');
+  setHandler();
 });

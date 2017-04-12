@@ -1,9 +1,18 @@
 import Koa from 'koa';
+import { database } from '../server';
 
-const app = new Koa();
+const DEFAULT_DEV_DB = 'mongodb://localhost/nxcms-api-dev';
+const dbConnectionString = process.env.NXCMS_DEV_DB || DEFAULT_DEV_DB;
 
-app.use((ctx) => {
-  ctx.body = 'Placeholder';
-});
+const createServer = async () => {
+  await database.connect(dbConnectionString);
+  const koa = new Koa();
 
-export default app;
+  koa.use((ctx) => {
+    ctx.body = 'Placeholder';
+  });
+
+  return koa;
+};
+
+export default createServer;
