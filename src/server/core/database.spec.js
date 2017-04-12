@@ -1,8 +1,9 @@
 import { expect } from 'chai';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import {
   connect,
   disconnect,
+  drop,
   getTestConnectionString,
 } from './database';
 
@@ -57,6 +58,41 @@ describe('database', () => {
     it('returns no error when called multiple times', async () => {
       await disconnect();
       await disconnect();
+    });
+  });
+
+  describe('drop', () => {
+    const someSchema = new Schema({ field: String });
+    const SomeModel = mongoose.model('SomeModel', someSchema);
+
+    beforeEach(async () => {
+      await connect();
+      await SomeModel.create({ field: '123' });
+    });
+
+    afterEach(() => (disconnect()));
+
+    it('drops database after connection', async () => {
+      let items = await SomeModel.find({});
+      expect(items).to.have.length(1);
+
+      await drop();
+      items = await SomeModel.find({});
+      expect(items).to.have.length(0);
+    });
+
+    it('drops database before connection', async () => {
+      let items = await SomeModel.find({});
+      expect(items).to.have.length(1);
+
+      await disconnect();
+      await Promise.all([
+        drop(),
+        connect(),
+      ]);
+
+      items = await SomeModel.find({});
+      expect(items).to.have.length(0);
     });
   });
 });

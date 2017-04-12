@@ -47,3 +47,5 @@ export const disconnect = () => new Promise((resolve, reject) => {
     if (err) resetState();
   });
 });
+
+export const drop = () => (mongoose.connection.dropDatabase());
