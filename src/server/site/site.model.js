@@ -1,7 +1,18 @@
 import mongoose, { Schema } from 'mongoose';
 
-const siteSchema = new Schema({
-  title: String,
-  tagline: String,
+const schema = new Schema({
+  title: {
+    type: String,
+    default: '',
+  },
+  tagline: {
+    type: String,
+    default: '',
+  },
+}, {
+  timestamps: true,
 });
 
+const model = mongoose.model('Site', schema);
+
+export default model;
