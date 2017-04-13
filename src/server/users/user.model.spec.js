@@ -11,6 +11,9 @@ const createUser = fields => ({
   },
   email: 'user@example.com',
   password: 'a'.repeat(60),
+  username: 'user',
+  displayNameUse: 'name',
+  isAdmin: false,
   ...fields,
 });
 
@@ -22,9 +25,8 @@ describe('User model', () => {
   it('valid user is created', async () => {
     await User.create(createUser());
 
-    const createdUser = (await User.findOne({})).toJSON();
-
-    expect(createdUser.name).to.deep.equal(createUser().name);
+    const foundUser = await User.findOne({});
+    expect(foundUser).to.exist;
   });
 
   it('missing fields fail validation', async () => {
@@ -35,6 +37,9 @@ describe('User model', () => {
       [{ name: { firstName: 'John', lastName: undefined } }, 'name.lastName'],
       [{ email: undefined }, 'email'],
       [{ password: undefined }, 'password'],
+      [{ username: undefined }, 'username'],
+      [{ displayNameUse: undefined }, 'displayNameUse'],
+      [{ isAdmin: undefined }, 'isAdmin'],
     ];
     // Make sure all fields are accounted for
     expect(tests).to.have.length(Object.keys(User.schema.obj).length + 2);
@@ -71,5 +76,19 @@ describe('User model', () => {
     const tooLong = createUser({ password: 'a'.repeat(61) });
     err = await promiseError(User.create(tooLong));
     expect(err).to.be.instanceof(mongoose.Error.ValidationError);
+  });
+
+  it('toJSON returns no sensitive fields', async () => {
+    const user = await User.create(createUser());
+    expect(user.toJSON()).to.not.have.any.keys(Object.keys(
+      User.schema.obj,
+    ));
+  });
+
+  it('toJSON returns expected fields', async () => {
+    const user = await User.create(createUser());
+    expect(user.toJSON()).to.have.all.keys([
+      '__v', 'updatedAt', 'createdAt', '_id', 'displayName',
+    ]);
   });
 });
