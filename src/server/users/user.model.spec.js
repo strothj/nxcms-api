@@ -1,9 +1,10 @@
-import { expect } from 'chai';
 import mongoose from 'mongoose';
+import { expect } from 'chai';
+import { promiseError } from '../../test-utils';
 import { database } from '../core';
 import User from './user.model';
 
-const validUserFields = fields => ({
+const createUser = fields => ({
   name: {
     firstName: 'John',
     lastName: 'Doe',
@@ -19,11 +20,11 @@ describe('User model', () => {
   beforeEach(() => User.remove({}));
 
   it('valid user is created', async () => {
-    await User.create(validUserFields());
+    await User.create(createUser());
 
     const createdUser = (await User.findOne({})).toJSON();
 
-    expect(createdUser.name).to.deep.equal(validUserFields().name);
+    expect(createdUser.name).to.deep.equal(createUser().name);
   });
 
   it('missing fields fail validation', async () => {
@@ -38,50 +39,37 @@ describe('User model', () => {
     // Make sure all fields are accounted for
     expect(tests).to.have.length(Object.keys(User.schema.obj).length + 2);
 
-    let err;
     for (const t of tests) {
-      err = null;
-      const invalidUserFields = validUserFields(t[0]);
+      const invalidUserFields = createUser(t[0]);
 
-      try { await User.create(invalidUserFields); } catch (e) { err = e; }
-
+      const err = await promiseError(User.create(invalidUserFields));
       expect(err, t[1]).to.be.an.instanceof(mongoose.Error.ValidationError);
     }
     /* eslint-enable no-restricted-syntax, no-await-in-loop */
   });
 
   it('rejects invalid emails', async () => {
-    const invalidUserFields = validUserFields({ email: 'fail' });
+    const invalidUserFields = createUser({ email: 'fail' });
 
-    let err;
-    try { await User.create({ invalidUserFields }); } catch (e) { err = e; }
+    const err = await promiseError(User.create(invalidUserFields));
 
     expect(err).to.be.an.instanceof(mongoose.Error.ValidationError);
   });
 
   it('lowercases emails', async () => {
-    const uppercasedEmailUser = validUserFields({ email: 'USER@example.com' });
+    const uppercasedEmailUser = createUser({ email: 'USER@example.com' });
 
     const user = await User.create(uppercasedEmailUser);
     expect(user.email).to.equal('user@example.com');
   });
 
   it('rejects passwords not 60 length (bcrypt)', async () => {
-    /* eslint-disable no-restricted-syntax, no-await-in-loop */
-    const tests = [
-      [{ password: 'a'.repeat(59) }, 'too short password'],
-      [{ password: 'a'.repeat(61) }, 'too long password'],
-    ];
+    const tooShort = createUser({ password: 'a'.repeat(59) });
+    let err = await promiseError(User.create(tooShort));
+    expect(err).to.be.instanceof(mongoose.Error.ValidationError);
 
-    let err;
-    for (const t of tests) {
-      err = null;
-      const invalidPasswordUser = validUserFields(t[0]);
-
-      try { await User.create(invalidPasswordUser); } catch (e) { err = e; }
-
-      expect(err, t[1]).to.be.an.instanceof(mongoose.Error.ValidationError);
-    }
-    /* eslint-enable no-restricted-syntax, no-await-in-loop */
+    const tooLong = createUser({ password: 'a'.repeat(61) });
+    err = await promiseError(User.create(tooLong));
+    expect(err).to.be.instanceof(mongoose.Error.ValidationError);
   });
 });
