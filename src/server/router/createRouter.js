@@ -3,6 +3,8 @@ import bodyParser from 'koa-bodyparser';
 import { database } from '../core';
 import createCSRFMiddleware from './createCSRFMiddleware';
 import createSessionMidleware from './createSessionMiddleware';
+import validationErrorMiddleware from './validationErrorMiddleware';
+import { userService } from '../users';
 
 const createRouter = async (config) => {
   const router = new Router();
@@ -17,19 +19,22 @@ const createRouter = async (config) => {
   router.use(['/signup'],
     bodyParser({ enableTypes: ['form'] }),
     createCSRFMiddleware(),
+    validationErrorMiddleware,
   );
 
   router.get('/signup', async (ctx, next) => {
+    ctx.state.flash = 'test';
     await next();
   });
-
+ // eslint-disable-next-line
   router.post('/signup', async (ctx, next) => {
+    await userService.signup(ctx.request.body);
     await next();
   });
 
-  router.get('*', async (ctx, next) => {
-    await next();
-  });
+  // router.get('*', async (ctx, next) => {
+  //   await next();
+  // });
 
   return router;
 };
