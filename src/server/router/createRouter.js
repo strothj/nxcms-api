@@ -28,7 +28,11 @@ const createRouter = async (config) => {
   });
  // eslint-disable-next-line
   router.post('/signup', async (ctx, next) => {
-    await userService.signup(ctx.request.body);
+    try {
+      await userService.signup(ctx.request.body);
+    } catch (e) {
+      ctx.session.error = e;
+    }
     await next();
   });
 
