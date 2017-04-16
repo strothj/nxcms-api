@@ -1,7 +1,4 @@
 import * as database from './database';
-import * as errors from './errors';
 
-export {
-  database,
-  errors,
-};
+// eslint-disable-next-line import/prefer-default-export
+export { database };

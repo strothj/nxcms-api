@@ -36,14 +36,27 @@ export const unflattenNameFields = async (ctx, next) => {
   await next();
 };
 
-export const signup = async (ctx) => {
+export const signup = async (ctx /* , next*/) => {
   if (ctx.request.body.isAdmin) ctx.throw(422, 'isAdmin is not allowed');
 
   const userDetails = pick(ctx.request.body, ['name', 'email', 'password', 'username', 'displayNameUse']);
   userDetails.isAdmin = false;
   userDetails.displayNameUse = userDetails.displayNameUse || 'username';
 
-  await User.create(userDetails);
+  const user = new User(userDetails);
+  await user.validate();
+  const existing = await User.findOne({
+    $or: [
+      { username: ctx.request.body.username },
+      { email: ctx.request.body.email },
+    ],
+  });
+  if (existing) {
+    if (existing.username === ctx.request.body.username) ctx.throw(422, 'username is unavailable');
+    ctx.throw(422, 'email is unavailable');
+  }
+  await user.save();
+  // await next();
 };
 
 export const staticRouter = new Router();

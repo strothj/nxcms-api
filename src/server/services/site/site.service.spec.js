@@ -11,7 +11,7 @@ const nonAdminUser = {};
 // eslint-disable-next-line
 const adminUser = { isAdmin: true };
 
-describe('Site service', () => {
+xdescribe('Site service', () => {
   before(() => database.connect());
 
   beforeEach(() => Site.remove({}));
