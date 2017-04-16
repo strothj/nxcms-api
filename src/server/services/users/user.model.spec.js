@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { expect } from 'chai';
-import { promiseError } from '../../test-utils';
-import { database } from '../core';
+import { promiseError } from '../../../test-utils';
+import { database } from '../../core';
 import User from './user.model';
 
 const createUser = fields => ({

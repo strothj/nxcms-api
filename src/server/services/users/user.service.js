@@ -1,6 +1,6 @@
 import sanitize from 'mongo-sanitize';
 import bcrypt from 'bcrypt';
-import { errors } from '../core';
+import { errors } from '../../core';
 import User from './user.model';
 
 const saltRounds = process.env.NODE_ENV === 'test' ? 1 : 10;

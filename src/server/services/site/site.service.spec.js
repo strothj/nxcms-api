@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { database, errors } from '../core';
+import { database, errors } from '../../core';
 import Site from './site.model';
 import {
   getTitleAndTagline,

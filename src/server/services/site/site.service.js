@@ -1,4 +1,4 @@
-import { errors } from '../core';
+import { errors } from '../../core';
 import Site from './site.model';
 
 export const getTitleAndTagline = () => Site.findOne();

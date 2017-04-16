@@ -4,7 +4,7 @@ import { database } from '../core';
 import createCSRFMiddleware from './createCSRFMiddleware';
 import createSessionMidleware from './createSessionMiddleware';
 import validationErrorMiddleware from './validationErrorMiddleware';
-import { userService } from '../users';
+import { userService } from '../services/users';
 
 const createRouter = async (config) => {
   const router = new Router();

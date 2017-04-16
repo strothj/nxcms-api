@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { promiseError } from '../../test-utils';
-import { database, errors } from '../core';
+import { promiseError } from '../../../test-utils';
+import { database, errors } from '../../core';
 import User from './user.model';
 import * as userService from './user.service';
 
