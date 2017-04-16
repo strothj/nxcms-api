@@ -50,4 +50,4 @@ export const staticRouter = new Router();
 staticRouter.post('/signup', encryptPassword, unflattenNameFields, signup);
 
 export const apiRouter = new Router();
-apiRouter.post('/api/users', encryptPassword, unflattenNameFields, signup);
+apiRouter.post('/users', encryptPassword, unflattenNameFields, signup);

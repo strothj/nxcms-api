@@ -32,7 +32,7 @@
     "build:client": "webpack --config tools/webpack.config.client.js",
     "build:server": "webpack --config tools/webpack.config.server.js",
     "clean": "rimraf client.js server.js .build",
-    "dev": "webpack --config tools/webpack.config.server.dev.js",
+    "dev": "cross-env NODE_ENV=development webpack --config tools/webpack.config.server.dev.js",
     "lint": "eslint \"src/**/*.js\" \"tools/**/*.js\"",
     "test": "cross-env NODE_ENV=test mocha --opts tools/mocha.opts"
   },
@@ -44,6 +44,7 @@
     "koa-csrf": "^3.0.5",
     "koa-generic-session": "^1.11.5",
     "koa-generic-session-mongo": "^0.3.1",
+    "koa-json-error": "^3.1.2",
     "koa-router": "^7.1.1",
     "lodash.pick": "^4.4.0",
     "mongo-sanitize": "^1.0.0",
