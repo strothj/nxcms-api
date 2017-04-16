@@ -1,7 +1,8 @@
 import path from 'path';
 import Koa from 'koa';
+import Router from 'koa-router';
 import Pug from 'koa-pug';
-import { createRouter } from '../server';
+import createServer from '../server';
 
 const DEFAULT_DEV_DB = 'mongodb://localhost/nxcms-api-dev';
 const dbConnectionString = process.env.NXCMS_DEV_DB || DEFAULT_DEV_DB;
@@ -13,28 +14,29 @@ const pug = new Pug({
   pretty: true,
 });
 
-const createServer = async () => {
+const startServer = async () => {
   const app = new Koa();
   pug.use(app);
 
   const appConfig = { dbConnectionString };
-  const router = await createRouter(appConfig);
+  const server = await createServer(appConfig);
+  const router = new Router();
+
+  router.use(server.routes(), server.allowedMethods());
 
   router.get('/signup', (ctx) => {
     ctx.render('signup', { csrf: ctx.csrf });
   });
 
-  router.post('/signup', (ctx) => {
-    ctx.body = ctx.request.body;
-  });
+  // router.post('/signup', (ctx) => {
+  //   ctx.body = ctx.request.body;
+  // });
 
   router.get('*', (ctx) => {
     ctx.render('index');
   });
 
-  return app
-    .use(router.routes())
-    .use(router.allowedMethods());
+  return app.use(router.routes());
 };
 
-export default createServer;
+export default startServer;

@@ -6,15 +6,15 @@ import User from './user.model';
 import * as controller from './user.controller';
 
 describe('User controller', () => {
-  before(() => Promise.all([
-    database.connect(),
-    database.drop(),
-  ]));
+  before(async () => {
+    await database.connect();
+    await database.drop();
+  });
 
   beforeEach(() => User.remove({}));
 
   describe('signup', () => {
-    const userDetails = overrides => ({ request: { body: {
+    const newCtx = overrides => ({ request: { body: {
       name: {
         firstName: 'John',
         lastName: 'Doe',
@@ -27,7 +27,7 @@ describe('User controller', () => {
     } } });
 
     it('signs up new user', async () => {
-      const ctx = userDetails();
+      const ctx = newCtx();
 
       const err = await promiseError(controller.signup(ctx));
 
@@ -37,13 +37,22 @@ describe('User controller', () => {
 
     it('prevents signup as an admin user', async () => {
       const ctxThrow = sinon.stub().throws();
-      const ctx = userDetails({ isAdmin: true });
+      const ctx = newCtx({ isAdmin: true });
       ctx.throw = ctxThrow;
 
       await promiseError(controller.signup(ctx));
 
       expect(ctxThrow.args[0][0]).to.equal(422);
       expect(ctxThrow.args[0][1]).to.contain('isAdmin');
+    });
+
+    it('sets default name display preference', async () => {
+      const ctx = newCtx();
+      delete ctx.request.body.displayNameUse;
+
+      const err = await promiseError(controller.signup(ctx));
+
+      expect(err).to.not.exist;
     });
   });
 

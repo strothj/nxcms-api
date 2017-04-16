@@ -1,4 +1,4 @@
-import * as userService from './user.service';
+import * as userController from './user.controller';
 
 export { default as User } from './user.model';
-export { userService };
+export { userController };
