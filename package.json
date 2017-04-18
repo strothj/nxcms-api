@@ -10,7 +10,7 @@
     "build": "webpack",
     "clean": "rimraf .build dist",
     "dev": "webpack --env.development",
-    "heroku-postbuild": "yarn build --production",
+    "heroku-postbuild": "yarn build",
     "lint": "eslint \"src/**/*.js\" webpack.config.js",
     "start": "node dist/server.bundle.js",
     "test": "mocha --opts mocha.opts"

@@ -37,6 +37,9 @@ module.exports = (env = {}) => {
       new webpack.ProvidePlugin({
         regeneratorRuntime: 'regenerator-runtime'
       }),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(isDevMode ? 'development' : 'production')
+      }),
       ...devHMRPlugins(isDevMode)
     ],
 
