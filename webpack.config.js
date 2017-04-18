@@ -1,10 +1,11 @@
-/* eslint-disable comma-dangle, no-use-before-define, global-require */
+/* eslint-disable comma-dangle, no-use-before-define, global-require,
+  import/no-extraneous-dependencies */
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-const projectRoot = path.resolve(__dirname, '..');
+const projectRoot = path.resolve(__dirname);
 
 module.exports = (env = {}) => {
   const isDevMode = env.development === true;
@@ -62,7 +63,7 @@ const babelConfigWithTreeShaking = () => {
   return babelConfig;
 };
 
-const devESLintValidation = (isDevMode) => (
+const devESLintValidation = isDevMode => (
   isDevMode ? [
     {
       enforce: 'pre',

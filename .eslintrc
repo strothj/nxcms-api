@@ -6,7 +6,7 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": ["error", {
-      "devDependencies": ["tools/**/*.js", "src/**/*.spec.js", "src/dev-server/*.js"]
+      "devDependencies": ["src/**/*.spec.js"]
     }],
     "no-unused-expressions": "off",
     "chai-friendly/no-unused-expressions": "error"

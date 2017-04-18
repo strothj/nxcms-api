@@ -7,13 +7,13 @@
     "node": "6.x"
   },
   "scripts": {
-    "build": "webpack --config tools/webpack.config.js",
+    "build": "webpack",
     "clean": "rimraf .build dist",
-    "dev": "webpack --config tools/webpack.config.js --env.development",
+    "dev": "webpack --env.development",
     "heroku-postbuild": "yarn build --production",
-    "lint": "eslint \"src/**/*.js\" \"tools/**/*.js\"",
+    "lint": "eslint \"src/**/*.js\" webpack.config.js",
     "start": "node dist/server.bundle.js",
-    "test": "mocha --opts tools/mocha.opts"
+    "test": "mocha --opts mocha.opts"
   },
   "dependencies": {
     "babel-core": "^6.24.0",
