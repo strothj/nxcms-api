@@ -5,4 +5,5 @@ export default {
     if (process.env.NODE_ENV === 'development') return process.env.MONGODB_URL_DEV || 'mongodb://localhost/nxcms-api-dev';
     return process.env.MONGODB_URL || 'mongodb://localhost/nxcms-api';
   })(),
+  isDemoMode: !!process.env.DEMO_MODE,
 };
