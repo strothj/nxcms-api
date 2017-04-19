@@ -25,10 +25,11 @@
     "koa-bodyparser": "3",
     "koa-json-error": "^3.1.2",
     "koa-router": "^7.1.1",
-    "lodash.pick": "^4.4.0",
+    "lodash": "^4.17.4",
     "mongoose": "^4.9.3",
+    "mongoose-unique-validator": "^1.0.5",
     "regenerator-runtime": "^0.10.3",
-    "validator": "^7.0.0",
+    "validate.js": "^0.11.1",
     "webpack": "^2.3.3",
     "webpack-node-externals": "^1.5.4"
   },

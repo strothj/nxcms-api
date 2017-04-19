@@ -4,11 +4,15 @@ const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const rimraf = require('rimraf').sync;
 
 const projectRoot = path.resolve(__dirname);
 
 module.exports = (env = {}) => {
   const isDevMode = env.development === true;
+  const outputPath = isDevMode ? path.join(projectRoot, '.build') : path.join(projectRoot, 'dist');
+
+  rimraf(outputPath);
 
   return {
     context: projectRoot,
@@ -17,7 +21,7 @@ module.exports = (env = {}) => {
 
     output: {
       filename: 'server.bundle.js',
-      path: isDevMode ? path.join(projectRoot, '.build') : path.join(projectRoot, 'dist'),
+      path: outputPath,
       pathinfo: isDevMode
     },
 

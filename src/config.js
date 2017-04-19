@@ -6,4 +6,5 @@ export default {
     return process.env.MONGODB_URL || 'mongodb://localhost/nxcms-api';
   })(),
   isDemoMode: !!process.env.DEMO_MODE,
+  bcryptSaltRounds: process.env.BCRYPT_ROUNDS ? parseInt(process.env.BCRYPT_ROUNDS, 10) : 10,
 };
