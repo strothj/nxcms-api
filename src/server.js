@@ -1,8 +1,10 @@
 import Koa from 'koa';
 import Router from 'koa-router';
+import bodyParser from 'koa-bodyparser';
 import jsonError from 'koa-json-error';
 import config from './config';
 import { database } from './core';
+import { sessionController } from './session';
 import { userController } from './users';
 
 const jsonErrorFormat = err => ({
@@ -10,9 +12,11 @@ const jsonErrorFormat = err => ({
   name: err.name,
   stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   status: err.status,
+  validationErrors: err.validationErrors,
 });
 
 const controllers = [
+  sessionController,
   userController,
 ];
 
@@ -29,9 +33,15 @@ const createApp = async () => {
   const app = new Koa();
   const router = new Router();
   router.use('/api', jsonError(jsonErrorFormat));
+
   controllers.forEach((c) => {
-    router.use(`/api/${c.name}`, c.router.routes(), c.router.allowedMethods());
+    router.use(`/api/${c.name}`,
+      bodyParser({ enableTypes: 'json' }),
+      c.router.routes(),
+      c.router.allowedMethods(),
+    );
   });
+
   app.use(router.routes());
 
   return app;
