@@ -3,7 +3,7 @@ import Router from 'koa-router';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import lodash from 'lodash';
-import { validateBody } from '../shared';
+import { validateBody, validateHeaders } from '../shared';
 import { User, userValidation } from '../users';
 
 const loginConstraints = {
@@ -11,10 +11,26 @@ const loginConstraints = {
   password: userValidation.password,
 };
 
+const jwtConstraint = {
+  format: {
+    pattern: new RegExp(/^Bearer .{100,}/, 'i'),
+    message: 'is malformed',
+  },
+};
+
 let secret;
 
 export const bootstrap = async () => {
   await new Promise((resolve, reject) => {
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log(
+        'WARNING: Using development mode secret for authorization middleware'
+      );
+      secret = 'secret';
+      resolve();
+      return;
+    }
     crypto.randomBytes(100, (err, buf) => {
       if (err) {
         reject(err);
@@ -57,6 +73,30 @@ export const login = async ctx => {
     message: 'success',
     token,
   };
+};
+
+export const middleware = async (ctx, next) => {
+  await validateHeaders({ authorization: jwtConstraint })(ctx, async () => {
+    if (!ctx.headers.authorization) {
+      await next();
+      return;
+    }
+    const token = ctx.headers.authorization.slice(7); // Remove "Bearer " from string
+
+    const user = await new Promise((resolve, reject) => {
+      jwt.verify(token, secret, {}, (err, t) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(t);
+      });
+    });
+
+    ctx.state.user = user;
+
+    await next();
+  });
 };
 
 export const name = 'session';

@@ -47,12 +47,18 @@ describe('UserController', () => {
       await userController.getAll(ctx);
     });
 
-    it('returns existing users', async () => {
+    it('returns existing users', () => {
       expect(ctx.body).to.have.length(2);
     });
 
-    it('password field removed', async () => {
+    it('password field removed', () => {
       expect(ctx.body[0].password).to.not.exist;
+    });
+
+    it('returns the JSON representation of the model', () => {
+      // Make sure tests are covering the toJSON output that the web server
+      // generates and not the model object.
+      expect(ctx.body[0]).to.not.have.property('toJSON');
     });
   });
 });

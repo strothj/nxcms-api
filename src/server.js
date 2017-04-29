@@ -29,7 +29,10 @@ const createApp = async () => {
 
   const app = new Koa();
   const router = new Router();
-  router.use('/api', jsonError(jsonErrorFormat));
+  router.use('/api', [
+    jsonError(jsonErrorFormat),
+    sessionController.middleware,
+  ]);
 
   controllers.forEach(c => {
     router.use(

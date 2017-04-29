@@ -26,7 +26,7 @@ export const bootstrap = async () => {
 
 export const getAll = async ctx => {
   let users = await User.find({});
-  users = users.map(u => lodash.omit(u, 'password'));
+  users = users.map(u => lodash.omit(u.toJSON(), 'password'));
   ctx.body = users;
 };
 
