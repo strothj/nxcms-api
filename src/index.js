@@ -4,7 +4,7 @@ import createApp from './server';
 
 const server = http.createServer();
 
-createApp().then((app) => {
+createApp().then(app => {
   server.on('request', app.callback());
   server.listen(config.port);
   console.log(`Server listening on port ${config.port}`); // eslint-disable-line no-console

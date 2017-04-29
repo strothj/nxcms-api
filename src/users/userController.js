@@ -13,7 +13,10 @@ export const bootstrap = async () => {
   if (!existingAdmin) {
     return User.create({
       username: DEFAULT_ADMIN_USERNAME,
-      password: await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, config.bcryptSaltRounds),
+      password: await bcrypt.hash(
+        DEFAULT_ADMIN_PASSWORD,
+        config.bcryptSaltRounds
+      ),
       displayNameUse: 'username',
       isAdmin: true,
     });
@@ -21,7 +24,7 @@ export const bootstrap = async () => {
   return Promise.resolve();
 };
 
-export const getAll = async (ctx) => {
+export const getAll = async ctx => {
   let users = await User.find({});
   users = users.map(u => lodash.omit(u, 'password'));
   ctx.body = users;

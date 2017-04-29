@@ -15,10 +15,7 @@ const jsonErrorFormat = err => ({
   validationErrors: err.validationErrors,
 });
 
-const controllers = [
-  sessionController,
-  userController,
-];
+const controllers = [sessionController, userController];
 
 const createApp = async () => {
   console.log(`Using ${process.env.NODE_ENV} database`); // eslint-disable-line no-console
@@ -34,11 +31,12 @@ const createApp = async () => {
   const router = new Router();
   router.use('/api', jsonError(jsonErrorFormat));
 
-  controllers.forEach((c) => {
-    router.use(`/api/${c.name}`,
+  controllers.forEach(c => {
+    router.use(
+      `/api/${c.name}`,
       bodyParser({ enableTypes: 'json' }),
       c.router.routes(),
-      c.router.allowedMethods(),
+      c.router.allowedMethods()
     );
   });
 
