@@ -1,1 +1,2 @@
-export { default } from './promiseError';
+// eslint-disable-next-line import/prefer-default-export
+export { default as promiseError } from './promiseError';
