@@ -1,10 +1,10 @@
 import crypto from 'crypto';
 
-const generateSecret = async () => {
-  if (process.env.NODE_ENV !== 'production') {
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.log(
+// eslint-disable-next-line no-console
+const generateSecret = async (env = process.env, logger = console.log) => {
+  if (env !== 'production') {
+    if (env === 'development') {
+      logger(
         'WARNING: Using development mode secret for authorization middleware'
       );
     }
