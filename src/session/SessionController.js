@@ -32,7 +32,7 @@ export default class SessionController extends Controller {
   };
 
   login = async ctx => {
-    const foundUser = await User.findOne({
+    let foundUser = await User.findOne({
       username: new RegExp(`\\b${ctx.request.body.username}\\b`, 'i'),
     });
 
@@ -43,14 +43,17 @@ export default class SessionController extends Controller {
       ctx.throw(401, 'username or password is incorrect');
     }
 
+    foundUser = this.lodash.omit(foundUser.toJSON(), 'password');
+
     const token = await jwt.sign(
-      this.lodash.omit(foundUser.toJSON(), 'password'),
+      this.lodash.omit(foundUser, 'password'),
       this.secret
     );
 
     ctx.body = {
       message: 'success',
       token,
+      profile: foundUser,
     };
   };
 

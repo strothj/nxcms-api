@@ -1,24 +1,10 @@
 import { expect } from 'chai';
+import { validUsers } from '../test-fixtures';
 import { database } from '../core';
 import User from './User';
 import UserController from './UserController';
 
 const userController = new UserController();
-
-const validUsers = [
-  {
-    username: 'bob',
-    password: 'a'.repeat(60),
-    displayNameUse: 'username',
-    isAdmin: false,
-  },
-  {
-    username: 'jane',
-    password: 'a'.repeat(60),
-    displayNameUse: 'username',
-    isAdmin: false,
-  },
-];
 
 describe('UserController', () => {
   before(async () => {
