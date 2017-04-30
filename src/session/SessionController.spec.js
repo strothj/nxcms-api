@@ -4,7 +4,7 @@ import { database } from '../core';
 // import { userController} from '../users';
 // import sessionController from './sessionController';
 
-describe('sessionController', () => {
+describe('SessionController', () => {
   before(() => database.connect());
 
   beforeEach(async () => {

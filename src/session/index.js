@@ -2,4 +2,4 @@
 
 // export { sessionController };
 // eslint-disable-next-line import/prefer-default-export
-export { default as sessionController } from './SessionController';
+export { default as SessionController } from './SessionController';

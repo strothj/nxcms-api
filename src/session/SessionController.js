@@ -16,7 +16,7 @@ const jwtConstraint = {
   },
 };
 
-export class SessionController extends Controller {
+export default class SessionController extends Controller {
   constructor() {
     super('session');
 
@@ -77,5 +77,3 @@ export class SessionController extends Controller {
     });
   };
 }
-
-export default new SessionController();

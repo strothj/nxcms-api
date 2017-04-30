@@ -1,7 +1,9 @@
 import { expect } from 'chai';
 import { database } from '../core';
 import User from './User';
-import * as userController from './userController';
+import UserController from './UserController';
+
+const userController = new UserController();
 
 const validUsers = [
   {
