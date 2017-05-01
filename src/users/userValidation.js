@@ -17,3 +17,15 @@ export const password = {
     maximum: 100,
   },
 };
+
+export const displayNameUse = {
+  presence: true,
+  inclusion: {
+    within: ['name', 'email', 'username'],
+    message: 'must be name, email, or username',
+  },
+};
+
+export const isAdmin = {
+  inclusion: [true, false],
+};

@@ -22,7 +22,9 @@ const schema = new Schema({
   displayNameUse: {
     type: String,
     required: true,
-    enum: ['name', 'email', 'username'],
+    validate: {
+      validator: v => !validate.single(v, validation.displayNameUse),
+    },
   },
 
   isAdmin: {

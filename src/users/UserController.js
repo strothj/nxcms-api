@@ -2,15 +2,28 @@ import bcrypt from 'bcrypt';
 import config from '../config';
 import { Controller } from '../shared';
 import User from './User';
+import * as userValidation from './userValidation';
 
 const DEFAULT_ADMIN_USERNAME = 'admin';
 const DEFAULT_ADMIN_PASSWORD = 'admin';
+
+const createUserConstraints = {
+  username: userValidation.username,
+  password: userValidation.password,
+  displayNameUse: userValidation.displayNameUse,
+  isAdmin: userValidation.isAdmin,
+};
 
 export default class UserController extends Controller {
   constructor() {
     super('users');
 
     this.router.get('/', this.requireAdmin, this.getAll);
+    this.router.post(
+      '/',
+      this.validateBody(createUserConstraints),
+      this.create
+    );
   }
 
   bootstrap = async () => {
@@ -33,5 +46,32 @@ export default class UserController extends Controller {
     let users = await User.find({});
     users = users.map(u => this.lodash.omit(u.toJSON(), 'password'));
     ctx.body = users;
+  };
+
+  // TODO: Validate rule for displayNameUse
+  // TODO: Verify admin user logged in to create another admin user
+  create = async ctx => {
+    const newUser = this.lodash.pick(
+      ctx.request.body,
+      Object.keys(createUserConstraints)
+    );
+    newUser.isAdmin = newUser.isAdmin || false;
+    newUser.password = await bcrypt.hash(
+      newUser.password,
+      config.bcryptSaltRounds
+    );
+
+    try {
+      await User.create(newUser);
+    } catch (err) {
+      if (this.lodash.get(err, 'errors.username.kind') === 'unique') {
+        ctx.throw(422, 'validation failed', {
+          validationErrors: { username: ['username is unavailable'] },
+        });
+      } else {
+        throw err;
+      }
+    }
+    ctx.body = { message: 'success' };
   };
 }
