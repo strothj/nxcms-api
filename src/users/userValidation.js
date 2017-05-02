@@ -18,12 +18,19 @@ export const password = {
   },
 };
 
-export const displayNameUse = {
-  presence: true,
-  inclusion: {
-    within: ['name', 'email', 'username'],
-    message: 'must be name, email, or username',
-  },
+// Only allow user to set their name display setting to a field that was provided.
+export const displayNameUse = (value, attributes) => {
+  const allowedFields = [];
+  if (attributes.username) allowedFields.push('username');
+  if (attributes.firstName && attributes.lastName) allowedFields.push('name');
+  if (attributes.email) allowedFields.push('email');
+  return {
+    presence: true,
+    inclusion: {
+      within: allowedFields,
+      message: 'can only be one of supplied fields "name", "email", "username',
+    },
+  };
 };
 
 export const isAdmin = {

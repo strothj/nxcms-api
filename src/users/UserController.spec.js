@@ -60,7 +60,7 @@ describe('UserController', () => {
       ctx.request.body.password = validUserCredentials[0].password;
       // Remove optional field isAdmin
       delete ctx.request.body.isAdmin;
-      ctx.throw = (status, message, { validationErrors }) => {
+      ctx.throw = (status, message, { validationErrors } = {}) => {
         const err = new Error(message);
         err.status = status;
         err.validationErrors = validationErrors;
@@ -81,6 +81,14 @@ describe('UserController', () => {
 
       expect(err.status).to.equal(422);
       expect(err.validationErrors.username[0]).to.contain('unavailable');
+    });
+
+    it('throws not authorized error if nonadmin tries creating admin user', async () => {
+      ctx.request.body.isAdmin = true;
+      ctx.user = validUsers[1];
+
+      const err = await promiseError(userController.create(ctx));
+      expect(err.status).to.equal(401);
     });
   });
 });

@@ -48,8 +48,6 @@ export default class UserController extends Controller {
     ctx.body = users;
   };
 
-  // TODO: Validate rule for displayNameUse
-  // TODO: Verify admin user logged in to create another admin user
   create = async ctx => {
     const newUser = this.lodash.pick(
       ctx.request.body,
@@ -61,6 +59,10 @@ export default class UserController extends Controller {
       config.bcryptSaltRounds
     );
 
+    if (newUser.isAdmin && this.lodash.get(ctx.user, 'isAdmin') !== true) {
+      ctx.throw(401, 'not authorized');
+    }
+
     try {
       await User.create(newUser);
     } catch (err) {
@@ -68,9 +70,8 @@ export default class UserController extends Controller {
         ctx.throw(422, 'validation failed', {
           validationErrors: { username: ['username is unavailable'] },
         });
-      } else {
-        throw err;
       }
+      throw err;
     }
     ctx.body = { message: 'success' };
   };
