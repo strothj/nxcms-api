@@ -16,6 +16,8 @@ const jwtConstraint = {
   },
 };
 
+export const generateJwtToken = (user, secret) => jwt.sign(user, secret);
+
 export default class SessionController extends Controller {
   constructor() {
     super('session');
@@ -45,10 +47,7 @@ export default class SessionController extends Controller {
 
     foundUser = this.lodash.omit(foundUser.toJSON(), 'password');
 
-    const token = await jwt.sign(
-      this.lodash.omit(foundUser, 'password'),
-      this.secret
-    );
+    const token = await generateJwtToken(foundUser, this.secret);
 
     ctx.body = {
       message: 'success',

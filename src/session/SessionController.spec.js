@@ -1,21 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { validUsers, validUserCredentials } from '../test-fixtures';
+import { koaCtx, validUsers, validUsersDB } from '../test-fixtures';
 import { promiseError } from '../test-utils';
 import { database } from '../core';
 import { User } from '../users';
-import SessionController from './SessionController';
-
-const throwMock = (code, msg) => {
-  const err = new Error(msg);
-  err.status = code;
-  throw err;
-};
-
-const ctxBody = fields => ({
-  request: { body: { ...fields } },
-  throw: throwMock,
-});
+import generateSecret from './generateSecret';
+import SessionController, { generateJwtToken } from './SessionController';
 
 describe('SessionController', () => {
   let controller;
@@ -24,7 +14,7 @@ describe('SessionController', () => {
 
   beforeEach(async () => {
     await database.drop();
-    await User.create(validUsers);
+    await User.create(validUsersDB());
     controller = new SessionController();
   });
 
@@ -41,10 +31,11 @@ describe('SessionController', () => {
 
     beforeEach(async () => {
       await controller.bootstrap();
-      ctx = ctxBody({
-        username: validUserCredentials[0].username,
-        password: validUserCredentials[0].password,
-      });
+      ctx = koaCtx();
+      ctx.request.body = {
+        username: validUsers()[0].username,
+        password: validUsers()[0].password,
+      };
     });
 
     it('throws 401 error on incorrect username', async () => {
@@ -68,7 +59,7 @@ describe('SessionController', () => {
       expect(err).to.not.exist;
       expect(ctx.body.message).to.equal('success');
       expect(ctx.body.token).to.exist;
-      expect(ctx.body.profile.username).to.equal(validUsers[0].username);
+      expect(ctx.body.profile.username).to.equal(validUsers()[0].username);
     });
   });
 
@@ -79,23 +70,17 @@ describe('SessionController', () => {
 
     beforeEach(async () => {
       await controller.bootstrap();
-      ctx = ctxBody({
-        username: validUserCredentials[0].username,
-        password: validUserCredentials[0].password,
-      });
-      await controller.login(ctx);
-      token = ctx.body.token;
-      ctx = {
-        headers: { authorization: `Bearer ${token}` },
-        throw: throwMock,
-        state: {},
-      };
+      const secret = await generateSecret();
+      token = await generateJwtToken(validUsers()[0], secret);
+
+      ctx = koaCtx();
+      ctx.headers.authorization = `Bearer ${token}`;
       next = sinon.stub().resolves();
     });
 
     it('valid auth token sets state to user profile', async () => {
       await controller.middleware(ctx, next);
-      expect(ctx.state.user.username).equal(validUsers[0].username);
+      expect(ctx.state.user.username).equal(validUsers()[0].username);
       expect(next.called).to.be.true;
     });
 

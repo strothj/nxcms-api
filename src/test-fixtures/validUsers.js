@@ -1,11 +1,12 @@
-import bcrypt from 'bcrypt';
-import validUserCredentials from './validUserCredentials';
-
-const validUsers = validUserCredentials.map(u => ({
-  username: u.username,
-  password: bcrypt.hashSync(u.password, 1),
-  displayNameUse: 'username',
-  isAdmin: false,
-}));
+const validUsers = () =>
+  [
+    { username: 'bob', password: 'password123' },
+    { username: 'jane', password: 'anotherPassword' },
+  ].map(u => ({
+    // Add common fields
+    ...u,
+    displayNameUse: 'username',
+    isAdmin: false,
+  }));
 
 export default validUsers;
