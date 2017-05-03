@@ -4,8 +4,8 @@ import bodyParser from 'koa-bodyparser';
 import jsonError from 'koa-json-error';
 import config from './config';
 import { database } from './core';
-import { sessionController } from './session';
-import { userController } from './users';
+import { SessionController } from './session';
+import { UserController } from './users';
 
 const jsonErrorFormat = err => ({
   message: err.message,
@@ -15,10 +15,10 @@ const jsonErrorFormat = err => ({
   validationErrors: err.validationErrors,
 });
 
-const controllers = [
-  sessionController,
-  userController,
-];
+const sessionController = new SessionController();
+const controllers = [sessionController].concat(
+  [UserController].map(C => new C())
+);
 
 const createApp = async () => {
   console.log(`Using ${process.env.NODE_ENV} database`); // eslint-disable-line no-console
@@ -32,13 +32,17 @@ const createApp = async () => {
 
   const app = new Koa();
   const router = new Router();
-  router.use('/api', jsonError(jsonErrorFormat));
+  router.use('/api', [
+    jsonError(jsonErrorFormat),
+    sessionController.middleware,
+  ]);
 
-  controllers.forEach((c) => {
-    router.use(`/api/${c.name}`,
+  controllers.forEach(c => {
+    router.use(
+      `/api/${c.name}`,
       bodyParser({ enableTypes: 'json' }),
       c.router.routes(),
-      c.router.allowedMethods(),
+      c.router.allowedMethods()
     );
   });
 

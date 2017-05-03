@@ -9,10 +9,28 @@
       "devDependencies": ["src/**/*.spec.js"]
     }],
     "no-unused-expressions": "off",
-    "chai-friendly/no-unused-expressions": "error"
+    "chai-friendly/no-unused-expressions": "error",
+
+    "react/jsx-closing-bracket-location": "off",
+    "react/jsx-curly-spacing": "off",
+    "react/jsx-equals-spacing": "off",
+    "react/jsx-first-prop-new-line": "off",
+    "react/jsx-indent": "off",
+    "react/jsx-indent-props": "off",
+    "react/jsx-space-before-closing": "off",
+    "react/jsx-tag-spacing": "off",
+    "react/jsx-wrap-multilines": "off",
+    "prettier/prettier": ["error", {
+      "singleQuote": true,
+      "trailingComma": "es5"
+    }]
   },
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "prettier"
+  ],
   "plugins": [
-    "chai-friendly"
+    "chai-friendly",
+    "prettier"
   ]
 }

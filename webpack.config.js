@@ -10,19 +10,23 @@ const projectRoot = path.resolve(__dirname);
 
 module.exports = (env = {}) => {
   const isDevMode = env.development === true;
-  const outputPath = isDevMode ? path.join(projectRoot, '.build') : path.join(projectRoot, 'dist');
+  const outputPath = isDevMode
+    ? path.join(projectRoot, '.build')
+    : path.join(projectRoot, 'dist');
 
   rimraf(outputPath);
 
   return {
     context: projectRoot,
 
-    entry: isDevMode ? ['webpack/hot/poll?1000', './src/index.js'] : './src/index.js',
+    entry: isDevMode
+      ? ['webpack/hot/poll?1000', './src/index.js']
+      : './src/index.js',
 
     output: {
       filename: 'server.bundle.js',
       path: outputPath,
-      pathinfo: isDevMode
+      pathinfo: isDevMode,
     },
 
     module: {
@@ -33,18 +37,20 @@ module.exports = (env = {}) => {
           loader: 'babel-loader',
           options: babelConfigWithTreeShaking(),
         },
-        ...devESLintValidation(isDevMode)
+        ...devESLintValidation(isDevMode),
       ],
     },
 
     plugins: [
       new webpack.ProvidePlugin({
-        regeneratorRuntime: 'regenerator-runtime'
+        regeneratorRuntime: 'regenerator-runtime',
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(isDevMode ? 'development' : 'production')
+        'process.env.NODE_ENV': JSON.stringify(
+          isDevMode ? 'development' : 'production'
+        ),
       }),
-      ...devHMRPlugins(isDevMode)
+      ...devHMRPlugins(isDevMode),
     ],
 
     devtool: isDevMode ? 'eval-source-map' : 'source-map',
@@ -53,9 +59,13 @@ module.exports = (env = {}) => {
 
     watch: isDevMode,
 
-    externals: isDevMode ? [nodeExternals({
-      whitelist: ['webpack/hot/poll?1000'],
-    })] : [nodeExternals()]
+    externals: isDevMode
+      ? [
+          nodeExternals({
+            whitelist: ['webpack/hot/poll?1000'],
+          }),
+        ]
+      : [nodeExternals()],
   };
 };
 
@@ -64,24 +74,25 @@ const babelConfigWithTreeShaking = () => {
     fs.readFileSync(path.join(projectRoot, '.babelrc'), { encoding: 'utf8' })
   );
   babelConfig.babelrc = false;
-  babelConfig.presets = babelConfig.presets.map(preset => (
-    preset === 'env' ? ['env', { modules: false }] : preset
-  ));
+  babelConfig.presets = babelConfig.presets.map(
+    preset => (preset === 'env' ? ['env', { modules: false }] : preset)
+  );
   return babelConfig;
 };
 
-const devESLintValidation = isDevMode => (
-  isDevMode ? [
-    {
-      enforce: 'pre',
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'eslint-loader'
-    }
-  ] : []
-);
+const devESLintValidation = isDevMode =>
+  (isDevMode
+    ? [
+        {
+          enforce: 'pre',
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: 'eslint-loader',
+        },
+      ]
+    : []);
 
-const devHMRPlugins = (isDevMode) => {
+const devHMRPlugins = isDevMode => {
   if (!isDevMode) return [];
 
   const StartServerPlugin = require('start-server-webpack-plugin');
@@ -89,6 +100,6 @@ const devHMRPlugins = (isDevMode) => {
     new StartServerPlugin('server.bundle.js'),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
   ];
 };

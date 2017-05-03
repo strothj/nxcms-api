@@ -1,10 +1,6 @@
 import { expect } from 'chai';
 import mongoose, { Schema } from 'mongoose';
-import {
-  connect,
-  disconnect,
-  drop,
-} from './database';
+import { connect, disconnect, drop } from './database';
 
 const disconnectedState = 0;
 const connectedState = 1;
@@ -62,10 +58,7 @@ describe('database', () => {
       expect(items).to.have.length(1);
 
       await disconnect();
-      await Promise.all([
-        drop(),
-        connect(),
-      ]);
+      await Promise.all([drop(), connect()]);
 
       items = await SomeModel.find({});
       expect(items).to.have.length(0);
