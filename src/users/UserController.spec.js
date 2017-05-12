@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { promiseError } from '../test-utils';
-import { koaCtx, validUsers, validUsersDB } from '../test-fixtures';
+import { koaCtx, validUsers, validUsersDB } from 'test-fixtures';
 import { database } from '../core';
 import User from './User';
 import UserController from './UserController';
@@ -70,7 +69,11 @@ describe('UserController', () => {
 
     it('throws validation error on existing user', async () => {
       await User.create(validUsersDB()[0]);
-      const err = await promiseError(userController.create(ctx));
+
+      let err;
+      await userController.create(ctx).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(422);
       expect(err.validationErrors.username[0]).to.contain('unavailable');
@@ -80,7 +83,10 @@ describe('UserController', () => {
       ctx.request.body.isAdmin = true;
       ctx.user = validUsers[1];
 
-      const err = await promiseError(userController.create(ctx));
+      let err;
+      await userController.create(ctx).catch(e => {
+        err = e;
+      });
       expect(err.status).to.equal(401);
     });
   });

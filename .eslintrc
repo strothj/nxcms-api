@@ -32,5 +32,8 @@
   "plugins": [
     "chai-friendly",
     "prettier"
-  ]
+  ],
+  "settings": {
+    "import/resolver": { "babel-module": {} }
+  }
 }
