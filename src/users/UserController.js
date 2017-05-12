@@ -21,6 +21,7 @@ export default class UserController extends Controller {
     this.router.get('/', this.requireAdmin, this.getAll);
     this.router.post(
       '/',
+      this.requireAdmin,
       this.validateBody(createUserConstraints),
       this.create
     );
@@ -58,10 +59,6 @@ export default class UserController extends Controller {
       newUser.password,
       config.bcryptSaltRounds
     );
-
-    if (newUser.isAdmin && this.lodash.get(ctx.user, 'isAdmin') !== true) {
-      ctx.throw(401, 'not authorized');
-    }
 
     try {
       await User.create(newUser);

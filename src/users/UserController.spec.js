@@ -78,16 +78,5 @@ describe('UserController', () => {
       expect(err.status).to.equal(422);
       expect(err.validationErrors.username[0]).to.contain('unavailable');
     });
-
-    it('throws not authorized error if nonadmin tries creating admin user', async () => {
-      ctx.request.body.isAdmin = true;
-      ctx.user = validUsers[1];
-
-      let err;
-      await userController.create(ctx).catch(e => {
-        err = e;
-      });
-      expect(err.status).to.equal(401);
-    });
   });
 });
