@@ -26,7 +26,12 @@ export default class UserController extends Controller {
       this.validateBody(userConstraints),
       this.create
     );
-    this.router.put('/:id', this.validateBody(userConstraints), this.update);
+    this.router.put(
+      '/:id',
+      this.requireSession,
+      this.validateBody(userConstraints),
+      this.update
+    );
   }
 
   bootstrap = async () => {
@@ -83,9 +88,17 @@ export default class UserController extends Controller {
   };
 
   update = async ctx => {
+    /* eslint-disable no-underscore-dangle */
     const id = ctx.params.id;
+    // Only admin can edit accounts belonging to other users
+    if (!ctx.state.user.isAdmin && ctx.state.user._id.toString() !== id)
+      ctx.throw(401, 'not authorized');
+
+    const user = await User.findById(id);
+    if (!user) ctx.throw(404, 'user not found');
+
     const userUpdate = {
-      ...(await User.findById(id)).toJSON(),
+      ...user.toJSON(),
       ...this.lodash.pick(ctx.request.body, Object.keys(userConstraints)),
     };
 
@@ -98,5 +111,6 @@ export default class UserController extends Controller {
 
     await User.findByIdAndUpdate(id, userUpdate);
     ctx.body = { message: 'success' };
+    /* eslint-enable */
   };
 }

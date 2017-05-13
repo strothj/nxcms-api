@@ -85,9 +85,9 @@ describe('UserController', () => {
 
     beforeEach(async () => {
       const user = await User.create(validUsersDB()[0]);
-      const id = user._id; // eslint-disable-line no-underscore-dangle
       ctx = koaCtx();
-      ctx.params = { id };
+      ctx.params = { id: user._id.toString() }; // eslint-disable-line no-underscore-dangle
+      ctx.state.user = user;
     });
 
     it('updates user account', async () => {
