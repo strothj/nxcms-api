@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const schema = new Schema({
-  editor: { type: mongoose.Schema('User'), required: true },
+  editor: { type: Schema.Types.ObjectId, required: true },
 
   publishDate: Date,
 
@@ -9,17 +9,19 @@ const schema = new Schema({
 
   headerImageURL: { type: String, required: true },
 
-  headerImageAttributionURL: { type: String, required: true },
+  headerImageAttributionURL: String,
 
-  headerImageAttributionText: { type: String, required: true },
+  headerImageAttributionText: String,
 
-  slug: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
 
   category: { type: String, required: true },
 
   tags: [String],
 
   synopsis: String,
+
+  youtubeVideoID: String,
 
   content: { type: String, required: true },
 });

@@ -3,7 +3,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import validate from 'validate.js';
 import * as validation from './userValidation';
 
-const schema = new Schema({
+export const userSchema = new Schema({
   username: {
     type: String,
     required: true,
@@ -41,8 +41,8 @@ const schema = new Schema({
   },
 });
 
-schema.plugin(uniqueValidator);
+userSchema.plugin(uniqueValidator);
 
-const model = mongoose.model('User', schema);
+const model = mongoose.model('User', userSchema);
 
 export default model;

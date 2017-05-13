@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import jsonError from 'koa-json-error';
 import config from './config';
 import { database } from './core';
+import { ArticleController } from './articles';
 import { SessionController } from './session';
 import { UserController } from './users';
 
@@ -17,7 +18,7 @@ const jsonErrorFormat = err => ({
 
 const sessionController = new SessionController();
 const controllers = [sessionController].concat(
-  [UserController].map(C => new C())
+  [ArticleController, UserController].map(C => new C())
 );
 
 const createApp = async () => {
