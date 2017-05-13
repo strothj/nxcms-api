@@ -18,6 +18,18 @@ export const password = {
   },
 };
 
+export const firstName = (value, attributes, attributeName) => {
+  if (attributes.firstName || attributes.lastName)
+    return {
+      presence: {
+        message: `must be supplied with ${attributeName === 'firstName' ? 'last name' : 'first name'}`,
+      },
+    };
+  return { presence: false };
+};
+
+export const lastName = firstName;
+
 // Only allow user to set their name display setting to a field that was provided.
 export const displayNameUse = (value, attributes) => {
   const allowedFields = [];

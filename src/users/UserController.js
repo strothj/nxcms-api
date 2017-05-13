@@ -10,6 +10,8 @@ const DEFAULT_ADMIN_PASSWORD = 'admin';
 const createUserConstraints = {
   username: userValidation.username,
   password: userValidation.password,
+  firstName: userValidation.firstName,
+  lastName: userValidation.lastName,
   displayNameUse: userValidation.displayNameUse,
   isAdmin: userValidation.isAdmin,
 };
