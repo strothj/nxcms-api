@@ -7,11 +7,23 @@ import * as userValidation from './userValidation';
 const DEFAULT_ADMIN_USERNAME = 'admin';
 const DEFAULT_ADMIN_PASSWORD = 'admin';
 
-const createUserConstraints = {
+const userConstraints = {
   username: userValidation.username,
   password: userValidation.password,
+  firstName: userValidation.firstName,
+  lastName: userValidation.lastName,
   displayNameUse: userValidation.displayNameUse,
-  isAdmin: userValidation.isAdmin,
+};
+
+const restrictToCurrentUser = ctx => {
+  /* eslint-disable no-underscore-dangle */
+  // Only admin can edit accounts belonging to other users
+  if (
+    !ctx.state.user.isAdmin &&
+    ctx.state.user._id.toString() !== ctx.params.id
+  )
+    ctx.throw(401, 'not authorized');
+  /* elsint-enable */
 };
 
 export default class UserController extends Controller {
@@ -21,9 +33,17 @@ export default class UserController extends Controller {
     this.router.get('/', this.requireAdmin, this.getAll);
     this.router.post(
       '/',
-      this.validateBody(createUserConstraints),
+      this.requireAdmin,
+      this.validateBody(userConstraints),
       this.create
     );
+    this.router.put(
+      '/:id',
+      this.requireSession,
+      this.validateBody(userConstraints),
+      this.update
+    );
+    this.router.del('/:id', this.requireAdmin, this.remove);
   }
 
   bootstrap = async () => {
@@ -51,17 +71,20 @@ export default class UserController extends Controller {
   create = async ctx => {
     const newUser = this.lodash.pick(
       ctx.request.body,
-      Object.keys(createUserConstraints)
+      Object.keys(userConstraints)
     );
-    newUser.isAdmin = newUser.isAdmin || false;
+
+    if (!newUser.password) {
+      ctx.throw(422, 'validation failed', {
+        validationErrors: { password: ['password is required'] },
+      });
+    }
+
+    newUser.isAdmin = false;
     newUser.password = await bcrypt.hash(
       newUser.password,
       config.bcryptSaltRounds
     );
-
-    if (newUser.isAdmin && this.lodash.get(ctx.user, 'isAdmin') !== true) {
-      ctx.throw(401, 'not authorized');
-    }
 
     try {
       await User.create(newUser);
@@ -73,6 +96,35 @@ export default class UserController extends Controller {
       }
       throw err;
     }
+    ctx.body = { message: 'success' };
+  };
+
+  update = async ctx => {
+    await restrictToCurrentUser(ctx);
+
+    const id = ctx.params.id;
+    const user = await User.findById(id);
+    if (!user) ctx.throw(404, 'user not found');
+
+    const userUpdate = {
+      ...user.toJSON(),
+      ...this.lodash.pick(ctx.request.body, Object.keys(userConstraints)),
+    };
+
+    if (userUpdate.password) {
+      userUpdate.password = await bcrypt.hash(
+        userUpdate.password,
+        config.bcryptSaltRounds
+      );
+    }
+
+    await User.findByIdAndUpdate(id, userUpdate);
+    ctx.body = { message: 'success' };
+  };
+
+  remove = async ctx => {
+    const id = ctx.params.id;
+    await User.findByIdAndRemove(id);
     ctx.body = { message: 'success' };
   };
 }

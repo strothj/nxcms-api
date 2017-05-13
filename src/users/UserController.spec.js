@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { promiseError } from '../test-utils';
-import { koaCtx, validUsers, validUsersDB } from '../test-fixtures';
+import { koaCtx, validUsers, validUsersDB } from 'test-fixtures';
 import { database } from '../core';
 import User from './User';
 import UserController from './UserController';
@@ -70,18 +69,56 @@ describe('UserController', () => {
 
     it('throws validation error on existing user', async () => {
       await User.create(validUsersDB()[0]);
-      const err = await promiseError(userController.create(ctx));
+
+      let err;
+      await userController.create(ctx).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(422);
       expect(err.validationErrors.username[0]).to.contain('unavailable');
     });
+  });
 
-    it('throws not authorized error if nonadmin tries creating admin user', async () => {
-      ctx.request.body.isAdmin = true;
-      ctx.user = validUsers[1];
+  describe('update', () => {
+    let ctx;
 
-      const err = await promiseError(userController.create(ctx));
-      expect(err.status).to.equal(401);
+    beforeEach(async () => {
+      const user = await User.create(validUsersDB()[0]);
+      ctx = koaCtx();
+      ctx.params = { id: user._id.toString() }; // eslint-disable-line no-underscore-dangle
+      ctx.state.user = user;
+    });
+
+    it('updates user account', async () => {
+      const userUpdate = {
+        username: 'newUsername',
+        firstName: 'newFirstName',
+        lastName: 'newLastName',
+      };
+      ctx.request.body = userUpdate;
+      await userController.update(ctx);
+      const updatedUser = await User.findOne({});
+      expect(updatedUser.username).to.equal('newUsername');
+      expect(ctx.body.message).to.equal('success');
+    });
+  });
+
+  describe('remove', () => {
+    let ctx;
+
+    beforeEach(async () => {
+      await userController.bootstrap();
+      ctx = koaCtx();
+      ctx.state.user = await User.findOne({});
+      const user = await User.create(validUsersDB()[0]);
+      ctx.params = { id: user._id.toString() }; // eslint-disable-line no-underscore-dangle
+    });
+
+    it('removes user account', async () => {
+      expect(await User.find({})).to.have.length(2);
+      await userController.remove(ctx);
+      expect(await User.find({})).to.have.length(1);
     });
   });
 });

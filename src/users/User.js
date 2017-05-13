@@ -19,6 +19,16 @@ const schema = new Schema({
     maxlength: 60,
   },
 
+  firstName: {
+    type: String,
+    minlength: 1,
+  },
+
+  lastName: {
+    type: String,
+    minlength: 1,
+  },
+
   displayNameUse: {
     type: String,
     required: true,

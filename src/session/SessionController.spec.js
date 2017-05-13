@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { koaCtx, validUsers, validUsersDB } from '../test-fixtures';
-import { promiseError } from '../test-utils';
+import { koaCtx, validUsers, validUsersDB } from 'test-fixtures';
 import { database } from '../core';
 import { User } from '../users';
 import generateSecret from './generateSecret';
@@ -41,7 +40,10 @@ describe('SessionController', () => {
     it('throws 401 error on incorrect username', async () => {
       ctx.request.body.username = 'invalid';
 
-      const err = await promiseError(controller.login(ctx));
+      let err;
+      await controller.login(ctx).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(401);
     });
@@ -49,14 +51,16 @@ describe('SessionController', () => {
     it('throws 401 error on incorrect password', async () => {
       ctx.request.body.password = 'invalid';
 
-      const err = await promiseError(controller.login(ctx));
+      let err;
+      await controller.login(ctx).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(401);
     });
 
     it('returns jwt and profile on success', async () => {
-      const err = await promiseError(controller.login(ctx));
-      expect(err).to.not.exist;
+      await controller.login(ctx);
       expect(ctx.body.message).to.equal('success');
       expect(ctx.body.token).to.exist;
       expect(ctx.body.profile.username).to.equal(validUsers()[0].username);
@@ -86,14 +90,22 @@ describe('SessionController', () => {
 
     it('malformed authentication header throws code 422', async () => {
       ctx.headers.authorization = 'invalid';
-      const err = await promiseError(controller.middleware(ctx, next));
+
+      let err;
+      await controller.middleware(ctx, next).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(422);
     });
 
     it('invalid token throws code 401', async () => {
       ctx.headers.authorization = `${ctx.headers.authorization}invalid`;
-      const err = await promiseError(controller.middleware(ctx, next));
+
+      let err;
+      await controller.middleware(ctx, next).catch(e => {
+        err = e;
+      });
 
       expect(err.status).to.equal(401);
     });
