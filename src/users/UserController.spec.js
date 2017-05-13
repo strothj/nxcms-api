@@ -79,4 +79,28 @@ describe('UserController', () => {
       expect(err.validationErrors.username[0]).to.contain('unavailable');
     });
   });
+
+  describe('update', () => {
+    let ctx;
+
+    beforeEach(async () => {
+      const user = await User.create(validUsersDB()[0]);
+      const id = user._id; // eslint-disable-line no-underscore-dangle
+      ctx = koaCtx();
+      ctx.params = { id };
+    });
+
+    it('updates user account', async () => {
+      const userUpdate = {
+        username: 'newUsername',
+        firstName: 'newFirstName',
+        lastName: 'newLastName',
+      };
+      ctx.request.body = userUpdate;
+      await userController.update(ctx);
+      const updatedUser = await User.findOne({});
+      expect(updatedUser.username).to.equal('newUsername');
+      expect(ctx.body.message).to.equal('success');
+    });
+  });
 });

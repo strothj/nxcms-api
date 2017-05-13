@@ -7,13 +7,12 @@ import * as userValidation from './userValidation';
 const DEFAULT_ADMIN_USERNAME = 'admin';
 const DEFAULT_ADMIN_PASSWORD = 'admin';
 
-const createUserConstraints = {
+const userConstraints = {
   username: userValidation.username,
   password: userValidation.password,
   firstName: userValidation.firstName,
   lastName: userValidation.lastName,
   displayNameUse: userValidation.displayNameUse,
-  isAdmin: userValidation.isAdmin,
 };
 
 export default class UserController extends Controller {
@@ -24,9 +23,10 @@ export default class UserController extends Controller {
     this.router.post(
       '/',
       this.requireAdmin,
-      this.validateBody(createUserConstraints),
+      this.validateBody(userConstraints),
       this.create
     );
+    this.router.put('/:id', this.validateBody(userConstraints), this.update);
   }
 
   bootstrap = async () => {
@@ -54,9 +54,16 @@ export default class UserController extends Controller {
   create = async ctx => {
     const newUser = this.lodash.pick(
       ctx.request.body,
-      Object.keys(createUserConstraints)
+      Object.keys(userConstraints)
     );
-    newUser.isAdmin = newUser.isAdmin || false;
+
+    if (!newUser.password) {
+      ctx.throw(422, 'validation failed', {
+        validationErrors: { password: ['password is required'] },
+      });
+    }
+
+    newUser.isAdmin = false;
     newUser.password = await bcrypt.hash(
       newUser.password,
       config.bcryptSaltRounds
@@ -72,6 +79,24 @@ export default class UserController extends Controller {
       }
       throw err;
     }
+    ctx.body = { message: 'success' };
+  };
+
+  update = async ctx => {
+    const id = ctx.params.id;
+    const userUpdate = {
+      ...(await User.findById(id)).toJSON(),
+      ...this.lodash.pick(ctx.request.body, Object.keys(userConstraints)),
+    };
+
+    if (userUpdate.password) {
+      userUpdate.password = await bcrypt.hash(
+        userUpdate.password,
+        config.bcryptSaltRounds
+      );
+    }
+
+    await User.findByIdAndUpdate(id, userUpdate);
     ctx.body = { message: 'success' };
   };
 }
