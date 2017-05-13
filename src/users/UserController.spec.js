@@ -103,4 +103,22 @@ describe('UserController', () => {
       expect(ctx.body.message).to.equal('success');
     });
   });
+
+  describe('remove', () => {
+    let ctx;
+
+    beforeEach(async () => {
+      await userController.bootstrap();
+      ctx = koaCtx();
+      ctx.state.user = await User.findOne({});
+      const user = await User.create(validUsersDB()[0]);
+      ctx.params = { id: user._id.toString() }; // eslint-disable-line no-underscore-dangle
+    });
+
+    it('removes user account', async () => {
+      expect(await User.find({})).to.have.length(2);
+      await userController.remove(ctx);
+      expect(await User.find({})).to.have.length(1);
+    });
+  });
 });

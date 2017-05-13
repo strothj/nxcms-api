@@ -15,6 +15,17 @@ const userConstraints = {
   displayNameUse: userValidation.displayNameUse,
 };
 
+const restrictToCurrentUser = ctx => {
+  /* eslint-disable no-underscore-dangle */
+  // Only admin can edit accounts belonging to other users
+  if (
+    !ctx.state.user.isAdmin &&
+    ctx.state.user._id.toString() !== ctx.params.id
+  )
+    ctx.throw(401, 'not authorized');
+  /* elsint-enable */
+};
+
 export default class UserController extends Controller {
   constructor() {
     super('users');
@@ -32,6 +43,7 @@ export default class UserController extends Controller {
       this.validateBody(userConstraints),
       this.update
     );
+    this.router.del('/:id', this.requireAdmin, this.remove);
   }
 
   bootstrap = async () => {
@@ -88,12 +100,9 @@ export default class UserController extends Controller {
   };
 
   update = async ctx => {
-    /* eslint-disable no-underscore-dangle */
-    const id = ctx.params.id;
-    // Only admin can edit accounts belonging to other users
-    if (!ctx.state.user.isAdmin && ctx.state.user._id.toString() !== id)
-      ctx.throw(401, 'not authorized');
+    await restrictToCurrentUser(ctx);
 
+    const id = ctx.params.id;
     const user = await User.findById(id);
     if (!user) ctx.throw(404, 'user not found');
 
@@ -111,6 +120,11 @@ export default class UserController extends Controller {
 
     await User.findByIdAndUpdate(id, userUpdate);
     ctx.body = { message: 'success' };
-    /* eslint-enable */
+  };
+
+  remove = async ctx => {
+    const id = ctx.params.id;
+    await User.findByIdAndRemove(id);
+    ctx.body = { message: 'success' };
   };
 }
