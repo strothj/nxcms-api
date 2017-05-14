@@ -17,6 +17,13 @@ class ArticleController extends Controller {
       this.validateBody(articleConstraints),
       this.create
     );
+    this.router.del('/:id', this.requireSession, this.remove);
+    this.router.put(
+      '/:id',
+      this.requireSession,
+      this.validateBody(articleConstraints),
+      this.update
+    );
   }
 
   getAll = async ctx => {
@@ -35,6 +42,41 @@ class ArticleController extends Controller {
     newArticle.editor = ctx.state.user._id;
 
     await Article.create(newArticle);
+    ctx.body = { message: 'success' };
+  };
+
+  remove = async ctx => {
+    const query = ctx.state.user.isAdmin
+      ? {}
+      : { editor: { _id: ctx.user._id } };
+    query._id = ctx.params.id;
+
+    await Article.remove(query);
+    ctx.body = { message: 'success' };
+  };
+
+  update = async ctx => {
+    const articleUpdate = this.lodash.pick(
+      ctx.request.body,
+      Object.keys(articleConstraints)
+    );
+    const article = await Article.findById(ctx.params.id);
+
+    // Only admin can edit posts from other users
+    if (
+      ctx.state.user._id.toString() !== article.editor &&
+      !ctx.state.user.isAdmin
+    ) {
+      ctx.throw(401, 'not authorized');
+    }
+
+    // Only admin can reassign editor
+    articleUpdate.editor = articleUpdate.editor || article.editor;
+    if (articleUpdate.editor !== article.editor && !ctx.state.user.isAdmin) {
+      ctx.throw(401, 'not authorized');
+    }
+
+    await Article.updateOne({ _id: ctx.params.id }, articleUpdate);
     ctx.body = { message: 'success' };
   };
 }
