@@ -16,6 +16,14 @@ export const password = {
   },
 };
 
+export const email = {
+  length: {
+    minimum: 5,
+    maximum: 100,
+  },
+  email: true,
+};
+
 export const firstName = (value, attributes, attributeName) => {
   if (attributes.firstName || attributes.lastName)
     return {

@@ -19,6 +19,12 @@ export const userSchema = new Schema({
     maxlength: 60,
   },
 
+  email: {
+    type: String,
+    unique: true,
+    uniqueCaseInsensitive: true,
+  },
+
   firstName: {
     type: String,
     minlength: 1,

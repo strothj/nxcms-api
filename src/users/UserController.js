@@ -10,6 +10,7 @@ const DEFAULT_ADMIN_PASSWORD = 'admin';
 const userConstraints = {
   username: userValidation.username,
   password: userValidation.password,
+  email: userValidation.email,
   firstName: userValidation.firstName,
   lastName: userValidation.lastName,
   displayNameUse: userValidation.displayNameUse,
@@ -85,6 +86,7 @@ export default class UserController extends Controller {
       newUser.password,
       config.bcryptSaltRounds
     );
+    if (newUser.email) newUser.email = newUser.email.toLowerCase();
 
     try {
       await User.create(newUser);
@@ -117,6 +119,7 @@ export default class UserController extends Controller {
         config.bcryptSaltRounds
       );
     }
+    if (userUpdate.email) userUpdate.email = userUpdate.email.toLowerCase();
 
     await User.findByIdAndUpdate(id, userUpdate);
     ctx.body = { message: 'success' };
