@@ -63,7 +63,7 @@ export default class SessionController extends Controller {
 
     ctx.body = {
       message: 'success',
-      profile: user,
+      profile: this.lodash.omit(user.toJSON(), 'password'),
     };
   };
 
