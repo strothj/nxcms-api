@@ -24,7 +24,7 @@ const restrictToCurrentUser = ctx => {
     ctx.state.user._id.toString() !== ctx.params.id
   )
     ctx.throw(401, 'not authorized');
-  /* elsint-enable */
+  /* eslint-enable */
 };
 
 export default class UserController extends Controller {
@@ -113,7 +113,9 @@ export default class UserController extends Controller {
       ...this.lodash.pick(ctx.request.body, Object.keys(userConstraints)),
     };
 
-    if (userUpdate.password) {
+    // Only encrypt if password was updated, otherwise it will be double
+    // encrypted.
+    if (ctx.request.body.password) {
       userUpdate.password = await bcrypt.hash(
         userUpdate.password,
         config.bcryptSaltRounds
