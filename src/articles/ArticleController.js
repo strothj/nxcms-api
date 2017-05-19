@@ -29,7 +29,7 @@ class ArticleController extends Controller {
   getAll = async ctx => {
     const query = ctx.state.user.isAdmin
       ? {}
-      : { editor: { _id: ctx.user._id } };
+      : { editor: { _id: ctx.state.user._id } };
     const articles = await Article.find(query);
     ctx.body = articles;
   };
