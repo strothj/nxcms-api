@@ -60,7 +60,8 @@ class ArticleController extends Controller {
       ctx.request.body,
       Object.keys(articleConstraints)
     );
-    const article = await Article.findById(ctx.params.id);
+    const article = (await Article.findById(ctx.params.id)).toJSON();
+    article.editor = article.editor.toString();
 
     // Only admin can edit posts from other users
     if (
