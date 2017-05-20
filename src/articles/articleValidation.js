@@ -14,7 +14,7 @@ validate.validators.tags = value => {
 
 export const editor = { length: { is: 24 } }; // Mongoose ID hex length
 
-export const publishDate = { numericality: { noStrings: true } };
+export const publishDate = {};
 
 export const title = { length: { minimum: 4, maximum: 100 } };
 
