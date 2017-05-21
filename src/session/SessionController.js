@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Controller } from '../shared';
 import { User, userValidation } from '../users';
 import generateSecret from './generateSecret';

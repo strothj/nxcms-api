@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import validUsers from './validUsers';
 
 const validUsersDB = () =>

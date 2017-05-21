@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import config from '../config';
 import { Controller } from '../shared';
 import User from './User';
