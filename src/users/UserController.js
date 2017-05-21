@@ -10,6 +10,7 @@ const DEFAULT_ADMIN_PASSWORD = 'admin';
 const userConstraints = {
   username: userValidation.username,
   password: userValidation.password,
+  email: userValidation.email,
   firstName: userValidation.firstName,
   lastName: userValidation.lastName,
   displayNameUse: userValidation.displayNameUse,
@@ -23,7 +24,7 @@ const restrictToCurrentUser = ctx => {
     ctx.state.user._id.toString() !== ctx.params.id
   )
     ctx.throw(401, 'not authorized');
-  /* elsint-enable */
+  /* eslint-enable */
 };
 
 export default class UserController extends Controller {
@@ -85,6 +86,7 @@ export default class UserController extends Controller {
       newUser.password,
       config.bcryptSaltRounds
     );
+    if (newUser.email) newUser.email = newUser.email.toLowerCase();
 
     try {
       await User.create(newUser);
@@ -111,12 +113,15 @@ export default class UserController extends Controller {
       ...this.lodash.pick(ctx.request.body, Object.keys(userConstraints)),
     };
 
-    if (userUpdate.password) {
+    // Only encrypt if password was updated, otherwise it will be double
+    // encrypted.
+    if (ctx.request.body.password) {
       userUpdate.password = await bcrypt.hash(
         userUpdate.password,
         config.bcryptSaltRounds
       );
     }
+    if (userUpdate.email) userUpdate.email = userUpdate.email.toLowerCase();
 
     await User.findByIdAndUpdate(id, userUpdate);
     ctx.body = { message: 'success' };

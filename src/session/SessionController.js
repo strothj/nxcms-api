@@ -27,6 +27,7 @@ export default class SessionController extends Controller {
     });
 
     this.router.post('/', this.validateBody(loginConstraints), this.login);
+    this.router.get('/', this.requireSession, this.profile);
   }
 
   bootstrap = async () => {
@@ -53,6 +54,16 @@ export default class SessionController extends Controller {
       message: 'success',
       token,
       profile: foundUser,
+    };
+  };
+
+  profile = async ctx => {
+    const user = await User.findById(ctx.state.user._id);
+    if (!user) ctx.throw(401, 'not authorized');
+
+    ctx.body = {
+      message: 'success',
+      profile: this.lodash.omit(user.toJSON(), 'password'),
     };
   };
 
